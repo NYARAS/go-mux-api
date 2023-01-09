@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  golang-api:
+  app:
     container_name: api
     build: .
     environment:
@@ -15,6 +15,16 @@ services:
     - .:/app
     depends_on:
      - db
+
+  proxy:
+    image: proxy:latest
+    depends_on:
+      - app
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_data:/vol/static
+
   db:
     container_name: api-database
     image: postgres:14.1
@@ -27,3 +37,6 @@ services:
       - 5433:5432
     volumes: 
       - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+
+volumes:
+  static_data:
