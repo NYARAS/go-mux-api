@@ -17,6 +17,7 @@
 go-mux-api.bin
 mod/
 vendor/
+tmp/
 .env
 
 # env file
