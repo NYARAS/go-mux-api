@@ -1,9 +1,29 @@
 version: "3"
 
 services:
-  db:
-    image: postgres:14-alpine
+  golang-api:
+    container_name: api
+    build: .
     environment:
-      - POSTGRES_DB=app
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=supersecretpassword
+      - APP_DB_HOST=api-database
+      - APP_DB_USERNAME=app
+      - APP_DB_PASSWORD=pleasechangeme
+      - APP_DB_NAME=api
+    ports:
+    - 8080:8080
+    volumes:
+    - .:/app
+    depends_on:
+     - db
+  db:
+    container_name: api-database
+    image: postgres:14.1
+    restart: always
+    environment:
+      - POSTGRES_DB=api
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=pleasechangeme
+    ports:
+      - 5433:5432
+    volumes: 
+      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
