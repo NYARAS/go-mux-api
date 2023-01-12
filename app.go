@@ -71,6 +71,12 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
+func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
+	log.Println("Entering healthcheck endpoint")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "API is up and running")
+}
+
 func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.FormValue("count"))
 	start, _ := strconv.Atoi(r.FormValue("start"))
@@ -151,6 +157,7 @@ func (a *App) deleteProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/healthcheck", a.healthCheck).Methods("GET")
 	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")
 	a.Router.HandleFunc("/product", a.createProduct).Methods("POST")
 	a.Router.HandleFunc("/product/{id:[0-9]+}", a.getProduct).Methods("GET")
